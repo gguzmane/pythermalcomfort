@@ -1123,3 +1123,34 @@ class IREQ(AutoStrMixin):
     icl_neutral: npt.ArrayLike
     dle_min: str | float | np.ndarray
     dle_neutral: str | float | np.ndarray
+
+@dataclass(frozen=True, repr=False)
+class HEATLim(AutoStrMixin):
+    """Dataclass to represent the HEAT-Lim calculation results.
+
+Attributes
+----------
+survive6H : bool or array-like of bool
+    Whether the environmental conditions remain non-lethal for heat-stroke during a 6-hour exposure [True, False].
+survive3H : bool or array-like of bool
+    Whether the environmental conditions remain non-lethal for heat-stroke during a 3-hour exposure [True, False].
+UHS_1p5MET : bool or array-like of bool
+    Whether heat balance cannot be maintained at the baseline metabolic rate of 1.5 METs - rest to sedentary activities (`S > 0`; uncompensable heat stress).[True, False].
+Mmax : float or array-like of float
+    Maximum safe metabolic rate that can be sustained without a positive rate of body heat storage (`S = 0`) 
+    under the specified environmental and personal conditions, translated into level of physical activity in [MET, young adults].  
+    Thus allowing safe, sustained work, and play for an extended period with no uncontrolled core temperature rises
+    (i.e., compensable heat stress). `Mmax` is reported from 1.5 to 10 METs.  
+    
+Mmax_W : float or array-like of float
+    Maximum sustainable metabolic heat production under the prevailing conditions, expressed in absolute units (W),
+    before conversion to Mmax in METs (i.e., compensable heat stress).
+    Thus allowing safe, sustained work, and play for an extended period with no uncontrolled core temperature rises.
+    
+    This estimate is not capped at 10 METs, therefore high values are obtained upon cold conditions.
+    """
+    survive6H: NumericInput
+    survive3H: NumericInput
+    UHS_1p5MET: NumericInput
+    Mmax: NumericInput
+    Mmax_W: NumericInput

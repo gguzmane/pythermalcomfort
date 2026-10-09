@@ -1344,3 +1344,138 @@ class IREQInputs(BaseInputs):
             raise ValueError("Relative humidity (rh) must be between 0 and 100.")
         if np.any(self.clo < 0):
             raise ValueError("Clothing insulation (clo) must be non-negative.")
+
+@dataclass
+class _HeatLimProfiles:
+    """Personal profile parameters used by HEAT-Lim."""
+
+    mass: float
+    height: float
+    f_eff: float
+    Icl: float
+    Re_cl: float
+    wmax: float
+    srmax: float
+
+    def __post_init__(self):
+        if not isinstance(self.mass, (int, float)):
+            raise TypeError("mass must be a number.")
+        if not isinstance(self.height, (int, float)):
+            raise TypeError("height must be a number.")
+        if not isinstance(self.f_eff, (int, float)):
+            raise TypeError("f_eff must be a number.")
+        if not isinstance(self.Icl, (int, float)):
+            raise TypeError("Icl must be a number.")
+        if not isinstance(self.Re_cl, (int, float)):
+            raise TypeError("Re_cl must be a number.")
+        if not isinstance(self.wmax, (int, float)):
+            raise TypeError("wmax must be a number.")
+        if not isinstance(self.srmax, (int, float)):
+            raise TypeError("srmax must be a number.")
+
+        if self.mass <= 0:
+            raise ValueError(f"mass must be > 0, got {self.mass}")
+        if self.height <= 0:
+            raise ValueError(f"height must be > 0, got {self.height}")
+        if not 0.5 < self.f_eff <= 0.95:
+            raise ValueError(
+                f"f_eff must be > 0.5 and <= 0.95, got {self.f_eff}"
+            )
+        if not 0 <= self.Icl <= 1:
+            raise ValueError(f"Icl must be between 0 and 1 clo, got {self.Icl}")
+        if self.Re_cl <= 0:
+            raise ValueError(f"Re_cl must be > 0, got {self.Re_cl}")
+        if self.wmax <= 0:
+            raise ValueError(f"wmax must be > 0, got {self.wmax}")
+        if self.srmax <= 0:
+            raise ValueError(f"srmax must be > 0, got {self.srmax}")
+        
+        
+@dataclass
+class HeatLimInputs(BaseInputs):
+    """Inputs for :func:`pythermalcomfort.models.heat_lim.heat_lim`.
+
+    Parameters
+    ----------
+    tdb : float or array-like
+        Dry-bulb air temperature in degrees Celsius (°C).
+    tr : float or array-like
+        Mean radiant temperature in degrees Celsius (°C).
+    rh : float or array-like
+        Relative humidity in percent (%). Values must be in the interval [0, 100].
+    vr : float or array-like
+        Relative air speed in metres per second (m/s), for this metrics is valid to use non-relative wind speed. Values must be in the
+        interval [0.1, 15].
+    profile : _HeatLimProfiles
+        HEAT-Lim personal profile. Use one of the predefined profiles from
+        :class:`pythermalcomfort.models.heat_lim.Profiles` or create a custom
+        ``_HeatLimProfiles`` instance.
+
+    Raises
+    ------
+    TypeError
+        If ``profile`` is not a ``_HeatLimProfiles`` instance.
+    ValueError
+        If ``rh`` contains values outside [0, 100], ``vr`` contains values
+        outside [0.1, 15], or the environmental inputs are not broadcastable
+        to a common shape.
+    """
+
+    def __init__(
+        self,
+        tdb: NumericInput,
+        tr: NumericInput,
+        rh: NumericInput,
+        vr: NumericInput,
+        profile: _HeatLimProfiles,
+    ):
+        # profile is not a BaseInputs field, so store it before
+        # initializing the parent dataclass.
+        self.profile = profile
+
+        super().__init__(
+            tdb=tdb,
+            tr=tr,
+            rh=rh,
+            vr=vr,
+        )
+
+    def __post_init__(self) -> None:
+        """Validate HEAT-Lim-specific inputs."""
+
+        # Validate profile type.
+        if not isinstance(self.profile, _HeatLimProfiles):
+            raise TypeError(
+                "profile must be a _HeatLimProfiles instance from the "
+                "Profiles dataclass or a custom HEAT-Lim profile."
+            )
+
+        # Run BaseInputs validation first.
+        super().__post_init__()
+
+        # Convert environmental inputs to NumPy arrays for validation.
+        tdb = np.asarray(self.tdb, dtype=float)
+        tr = np.asarray(self.tr, dtype=float)
+        rh = np.asarray(self.rh, dtype=float)
+        vr = np.asarray(self.vr, dtype=float)
+
+        # Check broadcasting compatibility.
+        try:
+            np.broadcast_arrays(tdb, tr, rh, vr)
+        except ValueError as err:
+            raise ValueError(
+                "Input arrays (tdb, tr, rh, vr) are not broadcastable "
+                "to a common shape."
+            ) from err
+
+        # Validate relative humidity.
+        if np.any(rh < 0) or np.any(rh > 100):
+            raise ValueError(
+                "Relative humidity (rh) must be between 0 and 100%."
+            )
+
+        # Validate relative air speed.
+        if np.any(vr < 0.1) or np.any(vr > 15):
+            raise ValueError(
+                "Relative air speed (vr) must be between 0.1 and 15 m/s."
+            )
