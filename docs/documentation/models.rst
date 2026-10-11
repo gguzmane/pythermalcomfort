@@ -166,6 +166,17 @@ Heat Index (HI) Schoen (2005)
     :noindex:
     :members:
 
+HEAT-Lim
+--------
+
+.. autofunction:: pythermalcomfort.models.heat_lim.heat_lim
+
+.. autoclass:: pythermalcomfort.models.heat_lim.Profiles
+    :members:
+
+.. autoclass:: pythermalcomfort.classes_return.HEATLim
+    :members:
+    
 Humidex
 -------
 

@@ -1,5 +1,7 @@
-import numpy as np
 from dataclasses import dataclass
+
+import numpy as np
+
 from pythermalcomfort.classes_input import HeatLimInputs, _HeatLimProfiles
 from pythermalcomfort.classes_return import HEATLim
 
@@ -69,8 +71,7 @@ float
 
 def get_METadults_conversion_factor(RER) -> float:
     """
-    Calculates energy expenditure conversion factor in METx to W/kg  based on 
-    the basal metabolic rate (BMR) across life span.    
+    Calculate the energy expenditure conversion factor in METx to W/kg  based on the basal metabolic rate (BMR) across life span.    
     Approaches are based on the BMR reported on the compendiums of physical activity,
     for adults older than 18 with fixed (VO2) and Respiratory Exchange Ratio (RER).    
    
@@ -647,9 +648,10 @@ Returns
 float
     Critical heat storage rate [W·kg⁻¹].
 """
-    valid = {1, 3, 6}
+    valid = {3, 6}
     if Exp_time not in valid:
-        raise ValueError("results: status must be one of %r." % valid)
+        message = f"results: status must be one of {valid!r}."
+        raise ValueError(message)
     #Estimation of constant power along exposure time
     DQ = 2.98*6  #CP.dT (change of temperature of 6 degrees)
     Ssurvive = (DQ * 1000)/(Exp_time*3600) #1000 is conversion from KJ to J, and 3600 conversion seg to hours
@@ -702,7 +704,8 @@ tuple
 """
     valid = {3, 6}
     if Exp_time not in valid:
-        raise ValueError("results: status must be one of %r." % valid)
+        message = f"results: status must be one of {valid!r}."
+        raise ValueError(message)
 
     Ssurvive = Ssurvive_from_Exposure_time(Exp_time)
 
@@ -801,7 +804,7 @@ float
 
 
 def non_livable (Mmax) -> bool:
-    '''This function indicates wether an environment is un-livable because is non-compensable at 1.5 METs.
+    '''Determine whether an environment is un-livable because is non-compensable at 1.5 METs.
 
 When Mmax is nan mean heat stress is non-compensable for sedentary-to-light activities and was set as a non-value.
 In such situation, a person can survive but is not able to live (no activity is possible without storage heat internally).
@@ -832,78 +835,89 @@ def heat_lim(
     vr: float | np.ndarray,
     profile: _HeatLimProfiles,
     ) -> HEATLim:
-    """Assess human survivability and livability under constant environmental conditions.
+    """Assess human survivability and livability to heat under constant environmental conditions.
 
-ASU-USYD HEAT-Lim applies partitional calorimetry principles to estimate human-environment heat exchanges and determine whether a person survives a 3-hour or 6-hour exposure, as well as the maximum sustainable metabolic rate (`Mmax`) under the same conditions. The model is intended for steady-state analyses in which thermoregulatory responses have reached their physiological limits, including maximum skin temperature, maximal sweat rate, and maximum skin wettedness.
+ASU-USYD HEAT-Lim applies partitional calorimetry principles to estimate
+human-environment heat exchange and assess survivability over 3-hour and
+6-hour constant exposures, as well as the maximum sustainable metabolic
+rate (Mmax) under the same conditions.
 
-The formulation follows the original HEAT-Lim framework described by Vanos et al. (2023), with updates introduced in HEAT-Lim V3 to improve the consistency of the model workflow and integration with the `pythermalcomfort` package.
+The model is intended for steady-state analyses in which thermoregulatory
+responses have reached their physiological limits, including maximum skin
+temperature, maximal sweat rate, and maximum skin wettedness.
 
-## Parameters
+The model builds on the physiological survivability and liveability framework
+described by Vanos et al. (2023). This implementation corresponds to
+HEAT-Lim V3, which includes subsequent scientific and computational updates
+documented in the HEAT-Lim repository.
 
+Parameters
+----------
 tdb : float or array-like
-    Dry-bulb air temperature [°C].
+    Dry-bulb air temperature in degrees Celsius (°C).
 tr : float or array-like
-    Mean radiant temperature [°C].
+    Mean radiant temperature in degrees Celsius (°C).
 rh : float or array-like
-    Relative humidity [%].
+    Relative humidity in percent (%). Values must be in the interval [0, 100].
 vr : float or array-like
-    Relative air speed [m·s⁻¹].
+    Relative air speed in metres per second (m/s). For this model, non-relative
+    air speed may also be used. Values must be in the interval [0.1, 15].
 profile : _HeatLimProfiles
-    Profile-specific dataclass with body morphology and clothing properties.
+    HEAT-Lim personal profile. Use one of the predefined profiles from
+    :class:`pythermalcomfort.models.heat_lim.Profiles` or create a custom
+    ``_HeatLimProfiles`` instance.
 
-## Returns
+Returns
+-------
+HEATLim
+    Dataclass containing 3-hour and 6-hour survivability, non-livability at
+    1.5 MET, and maximum sustainable metabolic rate (Mmax) in MET and watts.
 
-HEATLim 
-Dataclass containing survivability and livability `Mmax` metrics.
-
-## Examples
-
+Examples
+--------
 Scalar input:
 
-.. code-block:: python
-
-```
-from HEATLim_V3 import heat_lim, Profiles
-
-results = heat_lim(
-    tdb=38,
-    tr=45,
-    rh=20,
-    vr=0.8,
-    profile=Profiles.YOUNG_ADULT,
-)
-
-print(f"Mmax: {results.Mmax:.2f} METs")
-print(f"Survive 3H constant exposure: {results.survive3H}")
-```
+>>> from pythermalcomfort.models import heat_lim
+>>> from pythermalcomfort.models.heat_lim import Profiles
+>>> result = heat_lim(
+...     tdb=38,
+...     tr=45,
+...     rh=20,
+...     vr=0.8,
+...     profile=Profiles.YOUNG_ADULT,
+... )
+>>> result.Mmax
+>>> result.survive3H
 
 Array input:
 
-.. code-block:: python
+>>> import numpy as np
+>>> from pythermalcomfort.models import heat_lim
+>>> from pythermalcomfort.models.heat_lim import Profiles
+>>> temperature = np.arange(25, 60, 0.1)
+>>> humidity = np.arange(0.5, 100.5, 0.5)
+>>> tdb, rh = np.meshgrid(temperature, humidity)
+>>> result = heat_lim(
+...     tdb=tdb,
+...     tr=tdb,
+...     rh=rh,
+...     vr=1.0,
+...     profile=Profiles.YOUNG_ADULT,
+... )
+>>> result.Mmax.shape
+>>> result.survive3H.shape
 
-```
-import numpy as np
-from HEATLim_V3 import heat_lim, Profiles
+References
+----------
+Vanos, J. K., Guzman-Echavarria, G., Baldwin, J. W., Bongers, C. C. W. G.,
+Ebi, K. L., & Jay, O. (2023). A physiological approach for assessing human
+survivability and liveability to heat in a changing climate.
+Nature Communications, 14, 7653.
+https://doi.org/10.1038/s41467-023-43121-5
 
-temperature = np.arange(25, 60, 0.1)
-humidity = np.arange(0.5, 100.5, 0.5)
-Ta_C, RH = np.meshgrid(temperature, humidity)
-Av_ms = np.ones(Ta_C.shape) * 1
-mrt_C = Ta_C.copy()
+HEAT-Lim V3 source code:
+<GitHub repository URL ; Still not released HeatFutures lab is reviewing documentation: https://github.com/gguzmane/HEAT-Lim>
 
-results = heat_lim(
-    tdb=Ta_C,
-    tr=mrt_C,
-    rh=RH,
-    vr=Av_ms,
-    profile=Profiles.YOUNG_ADULT,
-)
-
-print(results.Mmax.shape)
-print(results.survive3H.shape)
-print(results.Mmax[0, 0])
-print(results.survive3H[0, 0])
-```
 """
 
     inputs = HeatLimInputs(

@@ -1,0 +1,149 @@
+{
+  "information": {
+    "summary": "HEAT-Lim V3 reference cases for survivability, livability, and custom profiles. Values generated from the self-contained HEAT-Lim V3 scientific implementation.",
+    "version": "1.0.0",
+    "license": "MIT",
+    "source": "HEAT-Lim_dev: heat_lim_reference_cases.py"
+  },
+  "tolerance": {
+    "survive6H": 0,
+    "survive3H": 0,
+    "UHS_1p5MET": 0,
+    "Mmax": 1e-06,
+    "Mmax_W": 1e-06
+  },
+  "data": [
+    {
+      "name": "typical_survivable",
+      "description": "Typical survivable conditions",
+      "inputs": {
+        "tdb": 30,
+        "tr": 30,
+        "rh": 30,
+        "vr": 1.0,
+        "profile": {
+          "type": "predefined",
+          "name": "YOUNG_ADULT"
+        }
+      },
+      "outputs": {
+        "survive6H": true,
+        "survive3H": true,
+        "UHS_1p5MET": false,
+        "Mmax": 5.46666106,
+        "Mmax_W": 486.8395139
+      }
+    },
+    {
+      "name": "near_survivability_threshold",
+      "description": "Near survivability threshold with high radiant exposure",
+      "inputs": {
+        "tdb": 35,
+        "tr": 70,
+        "rh": 30,
+        "vr": 1.0,
+        "profile": {
+          "type": "predefined",
+          "name": "OLDER_ADULT"
+        }
+      },
+      "outputs": {
+        "survive6H": false,
+        "survive3H": true,
+        "UHS_1p5MET": true,
+        "Mmax": null,
+        "Mmax_W": null
+      }
+    },
+    {
+      "name": "non_livable_but_survivable",
+      "description": "Non-livable but survivable conditions",
+      "inputs": {
+        "tdb": 35,
+        "tr": 60,
+        "rh": 30,
+        "vr": 1.0,
+        "profile": {
+          "type": "predefined",
+          "name": "OLDER_ADULT"
+        }
+      },
+      "outputs": {
+        "survive6H": true,
+        "survive3H": true,
+        "UHS_1p5MET": true,
+        "Mmax": null,
+        "Mmax_W": null
+      }
+    },
+    {
+      "name": "non_survivable",
+      "description": "Non-survivable conditions for a young adult",
+      "inputs": {
+        "tdb": 45,
+        "tr": 65,
+        "rh": 35,
+        "vr": 1.0,
+        "profile": {
+          "type": "predefined",
+          "name": "YOUNG_ADULT"
+        }
+      },
+      "outputs": {
+        "survive6H": false,
+        "survive3H": false,
+        "UHS_1p5MET": true,
+        "Mmax": null,
+        "Mmax_W": null
+      }
+    },
+    {
+      "name": "high_heat_stress_young_adult",
+      "description": "High heat stress case with survivability retained for the young-adult profile",
+      "inputs": {
+        "tdb": 48,
+        "tr": 48,
+        "rh": 10,
+        "vr": 1.0,
+        "profile": {
+          "type": "predefined",
+          "name": "YOUNG_ADULT"
+        }
+      },
+      "outputs": {
+        "survive6H": true,
+        "survive3H": true,
+        "UHS_1p5MET": false,
+        "Mmax": 2.61070847,
+        "Mmax_W": 232.49951467
+      }
+    },
+    {
+      "name": "custom_young_adult_bmi22",
+      "description": "Custom young-adult profile with BMI 22 in a hot-dry environment with elevated radiant exposure",
+      "inputs": {
+        "tdb": 38,
+        "tr": 45,
+        "rh": 20,
+        "vr": 0.8,
+        "profile": {
+          "type": "custom",
+          "mass": 56.3,
+          "height": 1.6,
+          "f_eff": 0.73,
+          "Icl": 0.36,
+          "Re_cl": 0.01,
+          "wmax": 0.75,
+          "srmax": 0.41
+        }
+      },
+      "outputs": {
+        "survive6H": true,
+        "survive3H": true,
+        "UHS_1p5MET": false,
+        "Mmax": 3.93950808,
+        "Mmax_W": 263.71342881
+      }
+    }
+  ]
+}

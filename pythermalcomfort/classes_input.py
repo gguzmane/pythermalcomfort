@@ -1404,8 +1404,8 @@ class HeatLimInputs(BaseInputs):
     rh : float or array-like
         Relative humidity in percent (%). Values must be in the interval [0, 100].
     vr : float or array-like
-        Relative air speed in metres per second (m/s), for this metrics is valid to use non-relative wind speed. Values must be in the
-        interval [0.1, 15].
+        Relative air speed in metres per second (m/s). For this model, non-relative
+    air speed may also be used. Values must be in the interval [0.1, 15].
     profile : _HeatLimProfiles
         HEAT-Lim personal profile. Use one of the predefined profiles from
         :class:`pythermalcomfort.models.heat_lim.Profiles` or create a custom
