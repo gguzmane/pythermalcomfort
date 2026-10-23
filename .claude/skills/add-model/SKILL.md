@@ -231,10 +231,10 @@ Run all of these; each catches a different missed step.
 
 ```bash
 # the function is actually exported
-pipenv run python -c "from pythermalcomfort.models import <name>; print(<name>)"
+uv run python -c "from pythermalcomfort.models import <name>; print(<name>)"
 
 # import list and __all__ agree - catches the step-4 half-edit, which no test catches
-pipenv run python -c "
+uv run python -c "
 import re, pathlib, pythermalcomfort.models as m
 src = pathlib.Path('pythermalcomfort/models/__init__.py').read_text()
 names = {n.strip() for line in re.findall(r'^from \.\w+ import (.+)\$', src, re.M) for n in line.split(',')}
@@ -245,18 +245,18 @@ assert not missing and not extra, 'models/__init__.py is out of sync'
 print('OK')"
 
 # scalar and array paths both work
-pipenv run python -c "
+uv run python -c "
 from pythermalcomfort.models import <name>
 print(<name>(tdb=30.2, rh=42.2))
 print(<name>(tdb=[30.2, 27.0], rh=[42.2, 68.8]))"
 
-pipenv run pytest tests/test_<name>.py -v
-pipenv run ruff format ./pythermalcomfort ./tests
-pipenv run ruff check --fix ./pythermalcomfort ./tests
-pipenv run docformatter -r -i --wrap-summaries 88 --wrap-descriptions 88 pythermalcomfort
+uv run pytest tests/test_<name>.py -v
+uv run ruff format ./pythermalcomfort ./tests
+uv run ruff check --fix ./pythermalcomfort ./tests
+uv run docformatter -r -i --wrap-summaries 88 --wrap-descriptions 88 pythermalcomfort
 
 # docs build, and the citation resolves - an unmatched key fails here, not earlier
-pipenv run tox -e docs
+uv run tox -e docs
 ```
 
 A broken citation key surfaces only in the docs build, so do not skip it.

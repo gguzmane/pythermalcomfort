@@ -38,7 +38,7 @@ def choice_field(allowed: list[str], default: Any = None) -> Any:
     return field(default=default, metadata={"allowed": allowed})
 
 
-class WorkIntensity(str, Enum):
+class WorkIntensity(str, Enum):  # noqa: UP042 - StrEnum would change str(member)
     """Enumeration for work intensity levels."""
 
     HEAVY = "heavy"

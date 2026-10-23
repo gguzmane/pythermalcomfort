@@ -71,8 +71,8 @@ optional dependencies, see the
 Requirements
 ============
 
-- Python 3.10+
-- NumPy, SciPy, Numba, setuptools (installed automatically)
+- Python 3.11+
+- NumPy, SciPy, Numba (installed automatically)
 - Optional: pandas, Matplotlib, or other plotting libraries for examples and visualizations
 
 Quick Start

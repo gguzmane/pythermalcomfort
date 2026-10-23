@@ -89,12 +89,13 @@ Setting up your development environment:
     git fetch upstream
     git checkout development
 
-2. Set up a virtual environment and install dependencies, you should have Python 3.12+ installed and `pipenv <https://pipenv.pypa.io/en/latest/>`_ available:
+2. Set up a virtual environment and install the development dependencies with `uv <https://docs.astral.sh/uv/>`_ (it installs Python 3.12 for you if needed):
 
 .. code-block:: bash
 
-    pip install pipenv
-    pipenv sync --dev
+    uv sync
+
+   Then run any tool through the environment, for example ``uv run pytest tests`` or ``uv run tox -e py312``.
 
 3. Create a feature branch based on the development branch, with a descriptive name for example:
 
@@ -119,27 +120,27 @@ Run these checks before committing and opening a PR:
 .. code-block:: bash
 
     # run tests quickly (subset)
-    pytest -k test_fragment
+    uv run pytest -k test_fragment
 
 To run the rest with tox and a specific Python version:
 
 .. code-block:: bash
 
-    tox -e pyXXX  # replace XXX with your Python version, e.g., 312
+    uv run tox -e pyXXX  # replace XXX with your Python version, e.g., 312
 
     # alternatively run full test suite via tox, you will need to have different Python versions installed
-    tox
+    uv run tox
 
 Formatting and linting
 
 .. code-block:: bash
 
     # formatting & linting (preferred)
-    ruff check --fix
-    ruff format
-    docformatter -r -i --wrap-summaries 88 --wrap-descriptions 88 pythermalcomfort
-    # optional; install pre-commit hooks (pre-commit install)
-    # pre-commit run --all-files
+    uv run ruff check --fix
+    uv run ruff format
+    uv run docformatter -r -i --wrap-summaries 88 --wrap-descriptions 88 pythermalcomfort
+    # optional; install pre-commit hooks (uv run pre-commit install)
+    # uv run pre-commit run --all-files
 
 Pull request checklist
 ----------------------
@@ -373,17 +374,17 @@ it in the same PR.
 
 .. code-block:: bash
 
-    ruff check --fix
-    ruff format
-    docformatter -r -i --wrap-summaries 88 --wrap-descriptions 88 pythermalcomfort
+    uv run ruff check --fix
+    uv run ruff format
+    uv run docformatter -r -i --wrap-summaries 88 --wrap-descriptions 88 pythermalcomfort
 
-    # optional; install pre-commit hooks (pre-commit install)
+    # optional; install pre-commit hooks (uv run pre-commit install)
 
 - Run tests:
 
 .. code-block:: bash
 
-    tox -e pyXXX  # replace XXX with your Python version, e.g., 312
+    uv run tox -e pyXXX  # replace XXX with your Python version, e.g., 312
 
 9) Open a PR
 ^^^^^^^^^^^^

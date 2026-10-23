@@ -20,12 +20,12 @@ only print results or show a plot interactively, and write no files.
 ## Running
 
 ```bash
-pipenv run python examples/manuscript-v4/example-1.py
-pipenv run python examples/manuscript-v4/pmv_utci_example.py
-pipenv run python examples/manuscript-v4/plotting_api_example.py
-pipenv run python examples/manuscript-v4/example-epw-analysis.py
-pipenv run python examples/manuscript-v4/example-field-study.py
-pipenv run python examples/manuscript-v4/jos3_transient_validation.py
+uv run python examples/manuscript-v4/example-1.py
+uv run python examples/manuscript-v4/pmv_utci_example.py
+uv run python examples/manuscript-v4/plotting_api_example.py
+uv run python examples/manuscript-v4/example-epw-analysis.py
+uv run python examples/manuscript-v4/example-field-study.py
+uv run python examples/manuscript-v4/jos3_transient_validation.py
 ```
 
 `example-epw-analysis.py` optionally accepts a path to an alternative EPW

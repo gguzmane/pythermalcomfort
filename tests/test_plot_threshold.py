@@ -127,6 +127,26 @@ def test_set_axis_rejects_parameter_conflicts_with_set_params() -> None:
         plot.set_params(tdb=25.0)
 
 
+@pytest.mark.parametrize("configured_axis", [None, "x", "y"])
+@pytest.mark.parametrize("regions_set", [False, True])
+def test_plot_rejects_missing_axes_before_regions_and_fill_options(
+    configured_axis: str | None, regions_set: bool
+) -> None:
+    plot = ThresholdPlot(vectorized_attribute_model)
+    if configured_axis == "x":
+        plot.set_x_axis("tdb", 20.0, 30.0)
+    elif configured_axis == "y":
+        plot.set_y_axis("rh", 20.0, 80.0)
+    if regions_set:
+        plot.set_regions(output="pmv", thresholds=[-0.5, 0.5])
+
+    with pytest.raises(ValueError) as exc_info:
+        plot.plot(fill_kws={"color": "red"})
+    assert str(exc_info.value) == (
+        "Axes are not set. Call set_x_axis(...) and set_y_axis(...) first."
+    )
+
+
 def test_plot_rejects_when_regions_not_set() -> None:
     plot = (
         ThresholdPlot(vectorized_attribute_model)
@@ -134,8 +154,11 @@ def test_plot_rejects_when_regions_not_set() -> None:
         .set_y_axis("rh", 20.0, 80.0, resolution=10.0)
     )
 
-    with pytest.raises(ValueError, match="Call set_regions"):
-        plot.plot()
+    with pytest.raises(ValueError) as exc_info:
+        plot.plot(fill_kws={"color": "red"})
+    assert str(exc_info.value) == (
+        "Regions are not set. Call set_regions(...) before plot(...)."
+    )
 
 
 def test_plot_raises_for_missing_required_model_inputs() -> None:

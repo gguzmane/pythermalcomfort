@@ -13,7 +13,7 @@ picks between the `Xrc{N}` and plain `X.Y.Z` formats on its own via `pre_n`'s
 `optional_value`. In the normal case you do not touch git yourself after running
 it — just push.
 
-Always invoke it through the project environment: `pipenv run bump-my-version`.
+Always invoke it through the project environment: `uv run bump-my-version`.
 
 ## Guardrails - read before starting
 
@@ -54,9 +54,9 @@ Then confirm the tree is healthy:
 ```bash
 git checkout development && git pull
 git status --short          # must be empty
-pipenv run pytest tests/ -x -q
-pipenv run ruff format --check ./pythermalcomfort ./tests
-pipenv run ruff check ./pythermalcomfort ./tests
+uv run pytest tests/ -x -q
+uv run ruff format --check ./pythermalcomfort ./tests
+uv run ruff check ./pythermalcomfort ./tests
 ```
 
 **Gate:** tests pass, format and lint clean, working tree empty.
@@ -81,7 +81,7 @@ On `development`. Pick the part that reflects the change; it lands on `X.Y.Zrc1`
 automatically.
 
 ```bash
-pipenv run bump-my-version bump minor    # or patch / major
+uv run bump-my-version bump minor    # or patch / major
 git push origin development --tags
 ```
 
@@ -115,7 +115,7 @@ still-running build.
 Only increment the RC number — never re-tag an existing one:
 
 ```bash
-pipenv run bump-my-version bump pre_n
+uv run bump-my-version bump pre_n
 git push origin development --tags
 ```
 
@@ -197,7 +197,7 @@ explicitly.
 
 ```bash
 test "$(git rev-parse --abbrev-ref HEAD)" = master || { echo "STOP: not on master"; exit 1; }
-pipenv run bump-my-version bump --new-version X.Y.Z
+uv run bump-my-version bump --new-version X.Y.Z
 git push origin master --tags
 ```
 
@@ -243,5 +243,5 @@ Version progression (verified against this repo's `.bumpversion.toml`):
 Check any bump before running it for real:
 
 ```bash
-pipenv run bump-my-version bump <part> --dry-run -v | grep -i "new version"
+uv run bump-my-version bump <part> --dry-run -v | grep -i "new version"
 ```

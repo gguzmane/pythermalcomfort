@@ -94,6 +94,64 @@ def test_basic_plot_renders_and_preserves_limits() -> None:
     plt.close(result.fig)
 
 
+@pytest.mark.parametrize("configured_axis", [None, "x", "y"])
+@pytest.mark.parametrize("regions_set", [False, True])
+def test_plot_requires_both_axes_before_regions_and_fill_options(
+    configured_axis: str | None, regions_set: bool
+) -> None:
+    """Incomplete axes take precedence over other configuration errors."""
+    plot = PsychrometricPlot(pmv_ppd_iso)
+    if configured_axis == "x":
+        plot.set_x_axis("tdb", 10.0, 40.0, resolution=1.0)
+    elif configured_axis == "y":
+        plot.set_y_axis("hr", 0.0, 30.0, resolution=2.0)
+    if regions_set:
+        plot.set_regions(output="pmv", thresholds=[-0.5, 0.5])
+
+    with pytest.raises(ValueError) as exc_info:
+        plot.plot(fill_kws={"color": "red"})
+    assert str(exc_info.value) == (
+        "Axes are not set. Call set_x_axis(...) and set_y_axis(...) first."
+    )
+
+
+def test_plot_requires_regions_before_fill_options() -> None:
+    """Missing regions take precedence over reserved fill options."""
+    plot = (
+        PsychrometricPlot(pmv_ppd_iso)
+        .set_x_axis("tdb", 10.0, 40.0, resolution=1.0)
+        .set_y_axis("hr", 0.0, 30.0, resolution=2.0)
+    )
+    with pytest.raises(ValueError) as exc_info:
+        plot.plot(fill_kws={"color": "red"})
+    assert str(exc_info.value) == (
+        "Regions are not set. Call set_regions(...) before plot(...)."
+    )
+
+
+def test_threshold_lines_are_clipped_to_saturation_boundary() -> None:
+    """Requested threshold lines carry a clip below the saturation curve."""
+    plot = (
+        _new_plot()
+        .set_x_axis("tdb", 10.0, 40.0, resolution=1.0)
+        .set_y_axis("hr", 0.0, 30.0, resolution=2.0)
+    )
+    result = plot.plot(show_lines=True)
+    try:
+        assert result.lines
+        for line in result.lines:
+            clip = line.get_clip_path()
+            assert clip is not None
+            path = clip.get_fully_transformed_path()
+            # These points lie inside the axes rectangle; only the saturation
+            # clip excludes the upper point at 20 degrees C.
+            below, above = result.ax.transData.transform([(20.0, 5.0), (20.0, 25.0)])
+            assert path.contains_point(below)
+            assert not path.contains_point(above)
+    finally:
+        plt.close(result.fig)
+
+
 def test_y_axis_has_default_humidity_ratio_label() -> None:
     """The chart labels its own y-axis instead of falling back to the bare 'hr'."""
     plot = _new_plot()

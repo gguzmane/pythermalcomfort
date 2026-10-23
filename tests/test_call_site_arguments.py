@@ -30,7 +30,10 @@ class _FunctionDef:
 
 
 def _parse_package() -> dict[Path, ast.Module]:
-    return {f: ast.parse(f.read_text()) for f in sorted(PACKAGE_DIR.rglob("*.py"))}
+    return {
+        f: ast.parse(f.read_text(encoding="utf-8"))
+        for f in sorted(PACKAGE_DIR.rglob("*.py"))
+    }
 
 
 def _is_numba_vectorize(decorator: ast.expr) -> bool:

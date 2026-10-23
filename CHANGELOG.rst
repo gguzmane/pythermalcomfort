@@ -7,6 +7,40 @@ Unreleased
   heat survivability and livability through maximum sustainable metabolic rate
   estimates (``Mmax``), with predefined young and older adult profiles and
   support for custom personal profiles.
+
+* Dropped support for Python 3.10, which reached end of life in October 2026.
+  pythermalcomfort now requires Python 3.11 or later. Users on Python 3.10 keep
+  getting 4.6.2 from pip.
+* ``AdaptivePlot.plot()`` now hides background grid lines by default. Pass
+  ``grid=True`` to display them (`#433
+  <https://github.com/pythermalcomfort/pythermalcomfort/issues/433>`_).
+* Fixed the applicability limit of ``adaptive_en``: with ``limit_inputs=True`` it
+  now returns NaN for running mean outdoor temperatures above 30 °C (EN 16798-1),
+  as its docstring already stated, instead of the ASHRAE 55 limit of 33.5 °C. The
+  default x-axis range of ``AdaptivePlot`` for ``adaptive_en`` is now 10-30 °C.
+* Added an example to the ``AdaptivePlot`` notebook that computes the running mean
+  outdoor temperature (EN 16798) and the prevailing mean outdoor air temperature
+  (ASHRAE 55) from hourly outdoor temperatures with
+  ``running_mean_outdoor_temperature`` and overlays hourly indoor temperatures on
+  both charts (`#457 <https://github.com/pythermalcomfort/pythermalcomfort/issues/457>`_).
+* Fixed ``solar_gain`` for ``posture="supine"``: the floor-reflected term used the
+  transposed (body-relative) altitude instead of the solar altitude. The transposed
+  angles are now used only for the projected area factor lookup, which matches the
+  CBE Thermal Comfort Tool. Supine ``erf`` and ``delta_mrt`` values change
+  (`#438 <https://github.com/pythermalcomfort/pythermalcomfort/pull/438>`_).
+
+4.6.2 (2026-10-15)
+------------------
+
+* Removed the ``numpy<2.3`` upper bound from the install requirements. numba already
+  pins the numpy versions it supports, so pythermalcomfort now accepts the same range.
+  Installing it no longer downgrades numpy 2.3 or later
+  (`#479 <https://github.com/pythermalcomfort/pythermalcomfort/issues/479>`_).
+* ``setuptools`` is no longer an install requirement: pythermalcomfort only uses it to
+  build the package, not at runtime. Installing pythermalcomfort no longer pins or
+  upgrades it. Raised the docs-build minimums flagged by Snyk to ``mistune>=3.3.3``,
+  ``soupsieve>=2.9.2`` and ``tornado>=6.5.2``
+  (`#379 <https://github.com/pythermalcomfort/pythermalcomfort/issues/379>`_).
 * Fixed ``work_capacity_hothaps`` and ``work_capacity_dunne`` rejecting a
   ``WorkIntensity`` member (e.g. ``WorkIntensity.MODERATE``) as ``work_intensity`` with
   "must be one of", while the same value as a string worked
@@ -26,6 +60,13 @@ Unreleased
   Previously affected set points change; the public ``pmv_ppd_iso()`` applicability
   limits remain unchanged
   (`#435 <https://github.com/pythermalcomfort/pythermalcomfort/issues/435>`_).
+* Fixed ``utci()`` missing humidity applicability checks. With ``limit_inputs=True``
+  (the default), relative humidity outside 0-100 % or water vapour pressure outside
+  0-5 kPa now gives NaN values and stress categories with a warning, instead of
+  misleading polynomial extrapolation in extreme humid heat (e.g. -326 °C at 50 °C and
+  100 % RH). These limits match the input checks of the official UTCI program.
+  ``limit_inputs=False`` keeps the previous values
+  (`#410 <https://github.com/pythermalcomfort/pythermalcomfort/issues/410>`_).
 * Fixed the ``solar_gain`` docstring example, which showed ``erf`` 42.9 and
   ``delta_mrt`` 10.3 instead of the 43.3 and 10.4 the call returns
   (`#449 <https://github.com/pythermalcomfort/pythermalcomfort/issues/449>`_).
