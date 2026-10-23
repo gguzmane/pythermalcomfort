@@ -40,7 +40,6 @@ from .work_capacity_hothaps import work_capacity_hothaps
 from .work_capacity_iso import work_capacity_iso
 from .work_capacity_niosh import work_capacity_niosh
 
-
 __all__ = [
     "JOS3",
     "Sports",

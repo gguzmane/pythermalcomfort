@@ -3,7 +3,10 @@ Changelog
 
 Unreleased
 ----------
-
+* Added ``heat_lim``, the ASU-USYD HEAT-Lim model for assessing 3- and 6-hour
+  heat survivability and livability through maximum sustainable metabolic rate
+  estimates (``Mmax``), with predefined young and older adult profiles and
+  support for custom personal profiles.
 * Fixed ``work_capacity_hothaps`` and ``work_capacity_dunne`` rejecting a
   ``WorkIntensity`` member (e.g. ``WorkIntensity.MODERATE``) as ``work_intensity`` with
   "must be one of", while the same value as a string worked

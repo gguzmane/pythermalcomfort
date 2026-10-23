@@ -870,8 +870,9 @@ profile : _HeatLimProfiles
 Returns
 -------
 HEATLim
-    Dataclass containing 3-hour and 6-hour survivability, non-livability at
-    1.5 MET, and maximum sustainable metabolic rate (Mmax) in MET and watts.
+    Dataclass containing 3-hour and 6-hour survivability, heat stress compensability at
+    1.5 MET, and maximum sustainable metabolic rate (Mmax) in watts and translated into
+    metabolic equivalents (MET 18-40 y).
 
 Examples
 --------

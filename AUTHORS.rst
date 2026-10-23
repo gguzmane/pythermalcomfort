@@ -16,6 +16,7 @@ Contributors
 * `Jonas Kittner`_
 * `Connor Forbes`_
 * `Yehui Huang`_
+* `Gisel Guzman-Echavarria`_
 
 .. _Federico Tartarini: https://www.linkedin.com/in/federico-tartarini-3991995b/
 .. _Stefano Schiavon: https://www.linkedin.com/in/stefanoschiavon/
@@ -24,6 +25,7 @@ Contributors
 .. _Akihisa Nomoto: https://www.linkedin.com/in/akihisa-nomoto-3b872611b/
 .. _Connor Forbes: https://www.linkedin.com/in/connor-forbes-1a490117b/
 .. _Yehui Huang: https://www.linkedin.com/in/yehuih/
+.. _Gisel Guzman-Echavarria: https://github.com/gguzmane
 
 Acknowledgements
 ----------------

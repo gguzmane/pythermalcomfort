@@ -1382,21 +1382,32 @@ class _HeatLimProfiles:
             raise TypeError("srmax must be a number.")
 
         if self.mass <= 0:
-            raise ValueError(f"mass must be > 0, got {self.mass}")
+            message = f"mass must be > 0, got {self.mass}"
+            raise ValueError(message)
+
         if self.height <= 0:
-            raise ValueError(f"height must be > 0, got {self.height}")
+            message = f"height must be > 0, got {self.height}"
+            raise ValueError(message)
+
         if not 0.5 < self.f_eff <= 0.95:
-            raise ValueError(
-                f"f_eff must be > 0.5 and <= 0.95, got {self.f_eff}"
-            )
+            message = f"f_eff must be > 0.5 and <= 0.95, got {self.f_eff}"
+            raise ValueError(message)
+
         if not 0 <= self.Icl <= 1:
-            raise ValueError(f"Icl must be between 0 and 1 clo, got {self.Icl}")
+            message = f"Icl must be between 0 and 1 clo, got {self.Icl}"
+            raise ValueError(message)
+
         if self.Re_cl <= 0:
-            raise ValueError(f"Re_cl must be > 0, got {self.Re_cl}")
+            message = f"Re_cl must be > 0, got {self.Re_cl}"
+            raise ValueError(message)
+
         if self.wmax <= 0:
-            raise ValueError(f"wmax must be > 0, got {self.wmax}")
+            message = f"wmax must be > 0, got {self.wmax}"
+            raise ValueError(message)
+
         if self.srmax <= 0:
-            raise ValueError(f"srmax must be > 0, got {self.srmax}")
+            message = f"srmax must be > 0, got {self.srmax}"
+            raise ValueError(message)
         
         
 @dataclass
