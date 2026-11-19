@@ -107,7 +107,46 @@ def test_heat_lim_invalid_ranges(parameter, value):
     with pytest.raises(ValueError):
         heat_lim(**inputs)
 
+@pytest.mark.parametrize("parameter", ["tdb", "tr", "rh", "vr"])
+@pytest.mark.parametrize("invalid_value", [np.nan, np.inf, -np.inf])
+def test_heat_lim_non_finite_inputs(parameter, invalid_value):
+    """Reject environmental inputs containing NaN or infinity."""
+    inputs = {
+        "tdb": 35,
+        "tr": 40,
+        "rh": 30,
+        "vr": 1,
+        "profile": Profiles.YOUNG_ADULT,
+    }
 
+    inputs[parameter] = invalid_value
+
+    with pytest.raises(
+        ValueError,
+        match="must contain only finite values",
+    ):
+        heat_lim(**inputs)
+        
+@pytest.mark.parametrize("parameter", ["tdb", "tr", "rh", "vr"])
+@pytest.mark.parametrize("invalid_value", [np.nan, np.inf, -np.inf])
+def test_heat_lim_non_finite_arrays(parameter, invalid_value):
+    """Reject vectorized environmental inputs containing non-finite values."""
+    inputs = {
+        "tdb": np.array([35.0, 36.0]),
+        "tr": np.array([40.0, 41.0]),
+        "rh": np.array([30.0, 40.0]),
+        "vr": np.array([1.0, 1.5]),
+        "profile": Profiles.YOUNG_ADULT,
+    }
+
+    inputs[parameter][1] = invalid_value
+
+    with pytest.raises(
+        ValueError,
+        match=f"{parameter} must contain only finite values",
+    ):
+        heat_lim(**inputs)
+        
 def test_heat_lim_invalid_profile():
     """Reject invalid personal profile objects."""
     with pytest.raises(TypeError):

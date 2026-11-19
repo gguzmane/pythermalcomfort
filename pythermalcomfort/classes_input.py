@@ -1477,6 +1477,21 @@ class HeatLimInputs(BaseInputs):
         tr = np.asarray(self.tr, dtype=float)
         rh = np.asarray(self.rh, dtype=float)
         vr = np.asarray(self.vr, dtype=float)
+        
+        # Reject NaN and positive/negative infinity.
+        environmental_inputs = {
+            "tdb": tdb,
+            "tr": tr,
+            "rh": rh,
+            "vr": vr,
+        }
+
+        for name, values in environmental_inputs.items():
+            if np.any(~np.isfinite(values)):
+                raise ValueError(
+                    f"{name} must contain only finite values; "
+                    "NaN and infinity are not allowed."
+                )
 
         # Check broadcasting compatibility.
         try:

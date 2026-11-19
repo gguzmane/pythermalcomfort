@@ -873,7 +873,12 @@ HEATLim
     Dataclass containing 3-hour and 6-hour survivability, heat stress compensability at
     1.5 MET, and maximum sustainable metabolic rate (Mmax) in watts and translated into
     metabolic equivalents (MET 18-40 y).
-
+    
+Raises
+------
+ValueError
+    If any environmental input contains NaN or infinity.
+    
 Examples
 --------
 Scalar input:
@@ -958,7 +963,6 @@ HEAT-Lim V3 source code:
     #  Metabolic Heat Flux (Hprod = M-W)	
     # =============================================================================
     M_rest = MET_to_MetabolicRate_W_Mass(1.5, mass) # [W] Resting metabolic power assuming 1.5 METs (~1.8 W·kg⁻¹).
-    M = M_rest
     W =  0 #no work done.						            		
     # =============================================================================
     # Dry Heat Loss from the Skin (C+R)		
@@ -971,13 +975,13 @@ HEAT-Lim V3 source code:
     # =============================================================================
     #  Heat Loss from Respiration (Cres+Eres)	
     # =============================================================================
-    Cres = Cres_from_M_Ta(M, tdb, AD)  # [W] Respiratory convective heat loss.
-    Eres = Eres_from_M_Pa(M, Pv_kPa, AD)  # [W] Respiratory evaporative heat loss.
+    Cres = Cres_from_M_Ta(M_rest, tdb, AD)  # [W] Respiratory convective heat loss.
+    Eres = Eres_from_M_Pa(M_rest, Pv_kPa, AD)  # [W] Respiratory evaporative heat loss.
     # =============================================================================
     # Estimation of Evaporation required and ambiental possible
     # =============================================================================
     #  evaporation required for heat balance per unit area.
-    Ereq_aux = Ereq(M, W, Dry_Heat_Loss, Cres, Eres)  # [W] Required evaporative heat loss for survivability.
+    Ereq_aux = Ereq(M_rest, W, Dry_Heat_Loss, Cres, Eres)  # [W] Required evaporative heat loss for survivability.
     # =============================================================================
     # Estimation  Byophisical (Env + clothing) and accouting wettedness(wettedness)
     # maximum evaporative heat loss
@@ -1006,7 +1010,7 @@ HEAT-Lim V3 source code:
     # Livability assessment
     # =============================================================================
    
-    Mmax_W, Mmax_MET = livability_Mmax(Ereq_aux, Emax_wettedness_aux, Emax_sweat_aux, M, mass) 
+    Mmax_W, Mmax_MET = livability_Mmax(Ereq_aux, Emax_wettedness_aux, Emax_sweat_aux, M_rest, mass) 
     # =============================================================================
     # Survivability assessment
     # =============================================================================
